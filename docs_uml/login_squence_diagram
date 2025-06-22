@@ -1,0 +1,22 @@
+@startuml Login Sequence Diagram
+
+actor User as "Pengguna"
+participant Frontend as "Frontend (React)"
+participant AuthController as "Auth Controller\n(Flask)"
+participant Database as "Database"
+
+User -> Frontend : Masukkan email & password
+Frontend -> AuthController : **POST /login** {email, password}
+AuthController -> Database : Query User by email
+Database --> AuthController : Data User (jika ada)
+
+alt Login Berhasil
+    AuthController -> AuthController : Verifikasi password\n& generate JWT
+    AuthController --> Frontend : 200 OK + token + data user
+    Frontend -> User : Redirect ke dashboard\n(Tampilkan menu)
+else Login Gagal
+    AuthController --> Frontend : 401 Unauthorized\n(error message)
+    Frontend -> User : Tampilkan pesan error
+end
+
+@enduml

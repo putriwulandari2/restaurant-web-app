@@ -1,0 +1,22 @@
+@startuml Create Item Sequence Diagram
+
+actor Admin as "Admin"
+participant Frontend as "Frontend (React)"
+participant ItemController as "Item Controller\n(Flask)"
+participant Database as "Database"
+
+Admin -> Frontend : Input data item\n(nama, harga, kategori, gambar)
+Frontend -> ItemController : **POST /items** {data, token}
+ItemController -> ItemController : Verifikasi JWT & role admin
+
+alt Data Valid
+    ItemController -> Database : Simpan MenuItem baru
+    Database --> ItemController : Konfirmasi sukses
+    ItemController --> Frontend : 201 Created + data item
+    Frontend -> Admin : Tampilkan pesan sukses\n(perbarui daftar item)
+else Unauthorized/Invalid
+    ItemController --> Frontend : 403 Forbidden/400 Bad Request
+    Frontend -> Admin : Tampilkan pesan error
+end
+
+@enduml

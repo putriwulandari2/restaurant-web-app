@@ -1,0 +1,48 @@
+@startuml Restaurant Class Diagram (Revised)
+
+' ===== Model Utama =====
+class User {
+  +id: Integer {pk}
+  +email: String {unique}
+  +password: String
+  +name: String
+  +created_at: DateTime
+  --
+  +set_password()
+  +check_password()
+}
+
+class MenuItem {
+  +id: Integer {pk}
+  +name: String
+  +description: String
+  +price: Float
+  +category: String
+  +image_url: String  # Dari kode frontend
+  --
+  +save_to_db()
+}
+
+class Review {
+  +id: Integer {pk}
+  +content: String
+  +rating: Integer
+  +created_at: DateTime
+}
+
+' ===== Relasi =====
+User "1" --> "0..*" Review : "writes"
+MenuItem "1" --> "0..*" Review : "has"
+
+' ===== Catatan =====
+note top of User
+  Autentikasi menggunakan Flask-Login.
+  Tidak ada kolom 'role' (admin/customer).
+end note
+
+note right of MenuItem
+  Kategori: food, drink, dessert.
+  Harga dalam format float.
+end note
+
+@enduml
