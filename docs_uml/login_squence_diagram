@@ -1,22 +1,32 @@
-@startuml Login Sequence Diagram
+@startuml FixedCreateItemSequence
 
-actor User as "Pengguna"
-participant Frontend as "Frontend (React)"
-participant AuthController as "Auth Controller\n(Flask)"
-participant Database as "Database"
+actor Admin as admin
+participant "Menu Page" as menuPage
+participant "AddForm" as addForm
+participant "Item Model" as itemModel
+participant "Database" as db
 
-User -> Frontend : Masukkan email & password
-Frontend -> AuthController : **POST /login** {email, password}
-AuthController -> Database : Query User by email
-Database --> AuthController : Data User (jika ada)
+admin -> menuPage : Navigate to menu
+menuPage -> addForm : Render empty form
 
-alt Login Berhasil
-    AuthController -> AuthController : Verifikasi password\n& generate JWT
-    AuthController --> Frontend : 200 OK + token + data user
-    Frontend -> User : Redirect ke dashboard\n(Tampilkan menu)
-else Login Gagal
-    AuthController --> Frontend : 401 Unauthorized\n(error message)
-    Frontend -> User : Tampilkan pesan error
+admin -> addForm : Fill item details\n(name, desc, price, image)
+admin -> addForm : Submit form
+
+addForm -> itemModel : validate_on_submit()
+alt Validation failed
+    addForm --> menuPage : Show errors
+else Validation success
+    itemModel -> itemModel : new Item(
+        name=form.name.data,
+        description=form.desc.data,
+        price=form.price.data,
+        source=form.image.data
+    )
+    itemModel -> db : session.add(new_item)
+    itemModel -> db : session.commit()
+    db --> itemModel : Success
+    itemModel --> menuPage : Flash("Item created!")
+    menuPage -> admin : Redirect to menu
 end
 
 @enduml
