@@ -1,48 +1,154 @@
-@startuml Restaurant Class Diagram (Revised)
+@startuml RestaurantClassDiagram
 
-' ===== Model Utama =====
-class User {
-  +id: Integer {pk}
-  +email: String {unique}
-  +password: String
-  +name: String
-  +created_at: DateTime
-  --
-  +set_password()
-  +check_password()
+' Classes
+class Flask {
 }
 
-class MenuItem {
-  +id: Integer {pk}
+class SQLAlchemy {
+}
+
+class Bcrypt {
+}
+
+class LoginManager {
+}
+
+class AuthyApiClient {
+}
+
+class User {
+  +id: Integer [PK]
+  +username: String
+  +fullname: String
+  +address: String
+  +phone_number: Integer
+  +password_hash: String
+  +tables: Table[]
+  +items: Item[]
+  +orders: Order[]
+  +password()
+  +check_password_correction(attempted_password)
+}
+
+class Table {
+  +table_id: Integer [PK]
+  +table: Integer
+  +time: String
+  +date: String
+  +accomodation: Integer
+  +reservee: String [FK -> User.id]
+  +assign_ownership(user)
+}
+
+class Item {
+  +item_id: Integer [PK]
   +name: String
   +description: String
-  +price: Float
-  +category: String
-  +image_url: String  # Dari kode frontend
-  --
-  +save_to_db()
+  +price: Integer
+  +source: String
+  +orderer: Integer [FK -> User.id]
+  +assign_ownership(user)
+  +remove_ownership(user)
 }
 
-class Review {
-  +id: Integer {pk}
-  +content: String
-  +rating: Integer
-  +created_at: DateTime
+class Order {
+  +order_id: Integer [PK]
+  +name: String [FK -> User.username]
+  +address: String
+  +order_items: String
+  +datetime: DateTime
 }
 
-' ===== Relasi =====
-User "1" --> "0..*" Review : "writes"
-MenuItem "1" --> "0..*" Review : "has"
+class RegisterForm {
+  +username: StringField
+  +fullname: StringField
+  +address: StringField
+  +phone_number: IntegerField
+  +password1: PasswordField
+  +password2: PasswordField
+  +submit: SubmitField
+}
 
-' ===== Catatan =====
-note top of User
-  Autentikasi menggunakan Flask-Login.
-  Tidak ada kolom 'role' (admin/customer).
+class LoginForm {
+  +username: StringField
+  +password: PasswordField
+  +submit: SubmitField
+}
+
+class OrderIDForm {
+  +orderid: StringField
+  +submit: SubmitField
+}
+
+class ReserveForm {
+  +submit: SubmitField
+}
+
+class AddForm {
+  +submit: SubmitField
+}
+
+class OrderForm {
+  +submit: SubmitField
+}
+
+' Relationships
+Flask "1" *-- "1" SQLAlchemy : contains
+Flask "1" *-- "1" Bcrypt : contains
+Flask "1" *-- "1" LoginManager : contains
+Flask "1" *-- "1" AuthyApiClient : contains
+
+User "1" *-- "0..*" Table : "reserves"
+User "1" *-- "0..*" Item : "orders"
+User "1" *-- "0..*" Order : "places"
+
+Table "0..1" -- "1" User : "reserved by"
+Item "0..1" -- "1" User : "ordered by"
+Order "1" -- "1" User : "belongs to"
+
+' Form relationships
+RegisterForm ..|> FlaskForm : extends
+LoginForm ..|> FlaskForm : extends
+OrderIDForm ..|> FlaskForm : extends
+ReserveForm ..|> FlaskForm : extends
+AddForm ..|> FlaskForm : extends
+OrderForm ..|> FlaskForm : extends
+
+' Notes
+note top of Flask
+  Flask application configuration:
+  - SQLALCHEMY_DATABASE_URI
+  - SECRET_KEY
+  - AUTHY_API_KEY
 end note
 
-note right of MenuItem
-  Kategori: food, drink, dessert.
-  Harga dalam format float.
+note right of User
+  UserMixin provides default implementations
+  for Flask-Login requirements
+end note
+
+note right of Table
+  Stores table reservation information:
+  - Table number
+  - Time slot
+  - Date
+  - Capacity
+end note
+
+note right of Item
+  Menu items with:
+  - Name
+  - Description
+  - Price
+  - Image source
+end note
+
+note right of Order
+  Order tracking information:
+  - Customer name
+  - Delivery address
+  - Items ordered
+  - Timestamp
 end note
 
 @enduml
