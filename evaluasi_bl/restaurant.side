@@ -1,0 +1,50 @@
+{
+  "id": "1778a1da-40cc-4b4c-a789-ec330ba468a9",
+  "version": "2.0",
+  "name": "res",
+  "url": "https://fuzzy-eureka-7vr79jp9g7552w4rp-5000.app.github.dev",
+  "tests": [{
+    "id": "95d12420-59d3-4e7d-99c8-72506ba26e63",
+    "name": "rest",
+    "commands": [{
+      "id": "c5d625bb-2b7b-436f-af69-3f076cd9f616",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "923bf4ee-60b1-42ac-8606-108fa722e87a",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "786x816",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7d3e66da-230a-4808-8e0b-431140b6684d",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=View Menu",
+      "targets": [
+        ["linkText=View Menu", "linkText"],
+        ["css=.button:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'View Menu')]", "xpath:link"],
+        ["xpath=//section[@id='home']/div/div/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/menu')]", "xpath:href"],
+        ["xpath=//div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'View Menu')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "cfe9cb00-6673-42b2-837e-b5ca44975c48",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["95d12420-59d3-4e7d-99c8-72506ba26e63"]
+  }],
+  "urls": ["https://fuzzy-eureka-7vr79jp9g7552w4rp-5000.app.github.dev/"],
+  "plugins": []
+}
